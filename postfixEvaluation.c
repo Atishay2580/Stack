@@ -1,5 +1,5 @@
+#include <stdio.h>
 #include <stdlib.h>
-
 #define STACKSIZE 100
 #define True 1
 #define False 0
@@ -62,4 +62,78 @@ char pop(struct stack *S)
         S->top = S->top - 1; // Decrement the top index to remove the element
         return x; // Return the popped element
     }
+}
+
+// Function to calculate the power of a number
+int power(int a, int n)
+{
+    int p;
+    if (n == 0)
+    {
+        return 1; // Any number raised to the power of 0 is 1
+    }
+    else
+    {
+        int p = power(a, n / 2); // Calculate power recursively
+        if (n % 2 == 0)
+            return p * p; // If n is even, return a^(n/2) * a^(n/2)
+        else
+            return p * p * a; // If n is odd, return a^(n/2) * a^(n/2) * a
+    }
+}
+
+// Function to evaluate an operation based on the operator
+int Evaluation(int a, int b, char symb)
+{
+    switch (symb)
+    {
+        case '+':
+            return a + b; // Addition
+        case '-':
+            return a - b; // Subtraction
+        case '*':
+            return a * b; // Multiplication
+        case '/':
+            return a / b; // Division
+        case '%':
+            return a % b; // Modulo
+        case '^':
+            return power(a, b); // Power operation
+    }
+}
+
+// Function to evaluate a postfix expression
+int postfixevaluation(char postfix[])
+{
+    int i, a, b, value;
+    int answer, symb;
+    struct stack S;
+    initialization(&S); // Initialize the stack
+    i = 0;
+    while (postfix[i] != '\0')
+    {
+        symb = postfix[i];
+        i = i + 1;
+        if (symb >= '0' && symb <= '9')
+            push(&S, symb - '0'); // Push operands onto the stack
+        else
+        {
+            b = pop(&S); // Pop the top two operands
+            a = pop(&S);
+            value = Evaluation(a, b, symb); // Evaluate the operation
+            push(&S, value); // Push the result back onto the stack
+        }
+    }
+    answer = stacktop(&S); // The final result is on the top of the stack
+    return answer;
+}
+
+int main()
+{
+    int answer, x;
+    char postfix[20];
+    printf("Enter the expression\n");
+    scanf("%s", postfix);
+    x = postfixevaluation(postfix); // Evaluate the postfix expression
+    printf("Evaluated Expression Result is:=> %d", x);
 }
